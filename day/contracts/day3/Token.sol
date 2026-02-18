@@ -32,29 +32,10 @@ contract Token{
         return success;
     }
     function TokenBalance() external view returns (uint){
-        balanceOf[msg.sender];
+       return balanceOf[msg.sender];
     }
-    function transferFrom(address _from, address _to, uint256 _value) external returns (bool success){
-        success = true;
-        require(_from != address(0), "Address Zero found");
-        require(_to != address(0), "Address Zero found");
-        require(balanceOf[_from] >=_value, "Insufficient Funds");
-        require(allowance[_from][_to] >= _value, 'You are not allowed to withdraw upto this amount');
-
-        balanceOf[_from] = balanceOf[_from] - _value;
-        balanceOf[_to] = balanceOf[_to] + _value;
-        allowance[_from][_to] = allowance[_from][_to]-_value;
-
-         emit Transfer(_from, _to, _value);
-        return success;
-    } 
-    function approve(address _spender, uint256 _value) external {
-        require(_spender != address(0), "Address Zero found");
-
-        allowance[msg.sender][_spender] = _value;
-
-        emit Approval(msg.sender, _spender, _value);
-    }
+    
+   
      function depositEther() external payable {
         require(msg.value > 0, "Can't deposit zero value");
 
