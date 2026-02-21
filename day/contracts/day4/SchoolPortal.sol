@@ -27,6 +27,7 @@ contract School {
         require(_age > 0, "Age must be greater than 0");
         require(IERC20(token_address).balanceOf(msg.sender) > _fee, "Insufficient funds");
         IERC20(token_address).transferFrom(msg.sender,_schoolAddress, _fee);
+
         studentInfo[msg.sender] = student({
             studentName: _studentName,
              age: _age, 
@@ -35,17 +36,18 @@ contract School {
              hasPaid: true, 
              date: block.timestamp
              });
+             studentAddresses.push(msg.sender);
     }
    
     mapping(address=>uint) public balanceOf;
     mapping(address=>mapping(address=>uint)) public allowance;
    
-    constructor(address _token_address){
+    constructor(address _token_address, address schoolAddress){
         _owner = msg.sender; // Contract Owner
-        _schoolAddress = 0xdD870fA1b7C4700F2BD7f44238821C26f7392148; // School Address
+       schoolAddress = _schoolAddress; // School Address
         token_address = _token_address;
     }
-    student[] public students;
+    
     struct staff{
         address id;
         string staffName;
@@ -53,6 +55,7 @@ contract School {
         uint date;
     }
     staff[] public staffs;
+    address[] public studentAddresses;
     
     event Transfer(address indexed from, address indexed to, uint value);
     event Approval(address indexed owner, address indexed spender, uint value);
@@ -61,12 +64,15 @@ contract School {
         success = true;
 
         require(msg.sender != address(0), "Address zero found");
-        require(msg.sender == _owner, "You dont have access to this");
-        require(balanceOf[msg.sender] > _value, "Insufficient Funds");
-        require(balanceOf[msg.sender] > 0, "You cant send zero _value");
+        // require(msg.sender == _owner, "You dont have access to this");
+        require(IERC20(token_address).balanceOf(msg.sender) > 0, "You cant send zero _value");
+        require(IERC20(token_address).balanceOf(msg.sender) > _value, "Insufficient Funds");
 
-        balanceOf[msg.sender] = balanceOf[msg.sender] - _value;
-        balanceOf[_to] = balanceOf[_to] + _value;
+        IERC20(token_address).transferFrom(msg.sender, _to, _value); // The msg.sender here must be the declared school address
+
+
+        // balanceOf[msg.sender] = balanceOf[msg.sender] - _value;
+        // balanceOf[_to] = balanceOf[_to] + _value;
         
         emit Transfer(msg.sender, _to, _value);
 
@@ -75,19 +81,27 @@ contract School {
     
     
     function viewAllStudents() public view returns (student[] memory) {
-        return students;
+        student[] memory allStudents = new student[](studentAddresses.length);
+    for(uint i = 0; i < studentAddresses.length; i++) {
+        allStudents[i] = studentInfo[studentAddresses[i]];
+    }
+    
+    return allStudents;
     }
      function Bank() public view returns (uint256) {
         return balanceOf[_owner];
     }
     function createStaff(string memory _staffName) public {
-        require(_owner != msg.sender, "You are the owner. You cant registered as a staff");
+        require(_owner != msg.sender, "You are the owner. You cant register as a staff");
         staff memory Staffs = staff({staffName: _staffName, id: msg.sender, isPaid: false, date: 0});
         staffs.push(Staffs);
     }
          
     function getAllStaffs() public view returns (staff[] memory) {
         return staffs;
+    }
+    function getBalance(address _of) public view returns (uint256){
+       return IERC20(token_address).balanceOf(_of);
     }
 }
  

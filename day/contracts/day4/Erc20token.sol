@@ -65,13 +65,13 @@ mapping(address => mapping(address => uint256)) allowances;
 
         require(balances[_from] >= _value, "allowance is greater than your balance");
 
-        require(_value <= allowances[_from][msg.sender], "Insufficient allowance");
+        require(_value <= allowances[_from][_to], "Insufficient allowance");
 
         balances[_from] = balances[_from] - _value;
 
         balances[_to] = balances[_to] + _value;
 
-        allowances[_from][msg.sender] = allowances[_from][msg.sender] - _value;
+        allowances[_from][_to] = allowances[_from][_to] - _value;
 
         return true;
     }
