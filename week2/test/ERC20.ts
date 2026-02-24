@@ -18,14 +18,19 @@ describe("ERC20", function () {
     it("Should mention the name of the token", async function () {
       const { erc20, owner } = await loadFixture(deployERC20);
       let name = await erc20.name();
-      
-      
-
       expect(name).to.equal("Ark");
-      
     });
-      
+    it("Should mention the symbol of the token", async function () {
+      const { erc20, owner } = await loadFixture(deployERC20);
+      let symbol = await erc20.symbol();
+      expect(symbol).to.equal("ARK");
     });
-
+     
+     it("Should mention the total supply of the token", async function () {
+      const { erc20, owner } = await loadFixture(deployERC20);
+      let totalSupply = await erc20.totalSupply();
+      expect(totalSupply).to.equal(1000);
+    });
+  });
     
 });
