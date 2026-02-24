@@ -5,11 +5,11 @@ import { buildModule } from "@nomicfoundation/hardhat-ignition/modules";
 
 
 
-const LockModule = buildModule("LockModule", (m) => {
+const ERC20Module = buildModule("ERC20Module", (m) => {
   
-  const Lock = m.contract("Lock", []);
+  const ERC20 = m.contract("ERC20", []);
 
-  return { Lock };
+  return { ERC20 };
 });
 
-export default LockModule;
+export default ERC20Module;
